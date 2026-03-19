@@ -23,7 +23,7 @@ class Pipe:
     """A single animated pipe segment that moves across the terminal."""
 
     _char_set = "┃┏ ┓┛━┓  ┗┃┛┗ ┏━"
-    _color_set = ["red", "green", "blue"]
+    _color_set = ["red", "green", "yellow", "blue", "magenta", "cyan", "white"]
 
     def __init__(
         self, max_x: int, max_y: int, p_turn: float = 0.1, border: str = "reset"

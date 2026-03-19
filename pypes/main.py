@@ -1,8 +1,6 @@
 import argparse
-import time
 
-from pipe import Pipe
-from render import Renderer
+from core import Animation
 
 
 def parse_args() -> argparse.Namespace:
@@ -25,17 +23,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main(args: argparse.Namespace) -> None:
-    renderer = Renderer()
-    pipe = Pipe(
-        renderer.max_x, renderer.max_y, p_turn=args.turn_prob, border=args.border_method
-    )
-
-    with renderer.term.fullscreen(), renderer.term.hidden_cursor():
-        while True:
-            renderer.draw(pipe)
-            pipe.move()
-            pipe.turn()
-            time.sleep(1 / args.fps)
+    animation = Animation(args)
+    animation.loop()
 
 
 if __name__ == "__main__":
