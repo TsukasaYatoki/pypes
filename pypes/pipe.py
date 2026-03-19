@@ -20,9 +20,10 @@ class Pipe:
     }
     _char = "┃┏ ┓┛━┓  ┗┃┛┗ ┏━"
 
-    def __init__(self, max_x: int, max_y: int) -> None:
+    def __init__(self, max_x: int, max_y: int, border: str = "reset") -> None:
         self.max_x = max_x
         self.max_y = max_y
+        self.border = border
 
         self.reset()
 
@@ -52,7 +53,11 @@ class Pipe:
         self.y += dy
 
         if not (0 <= self.x < self.max_x and 0 <= self.y < self.max_y):
-            self.reset()
+            if self.border == "cycle":
+                self.x %= self.max_x
+                self.y %= self.max_y
+            else:
+                self.reset()
 
     def turn(self, p_straight: float = 0.9) -> None:
         """Randomly keep going straight or turn left/right, then update the glyph."""

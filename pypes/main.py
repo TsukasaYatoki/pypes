@@ -15,6 +15,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--straight_prob", type=float, default=0.9, help="Probability of going straight"
     )
+    parser.add_argument(
+        "--border_method",
+        choices=["reset", "cycle"],
+        default="reset",
+        help="How pipes behave at the border",
+    )
 
     return parser.parse_args()
 
@@ -24,7 +30,7 @@ def main(args: argparse.Namespace) -> None:
     canvas = Canvas(term)
     canvas.clear()
 
-    pipe = Pipe(term.width, term.height)
+    pipe = Pipe(term.width, term.height, border=args.border_method)
 
     with term.fullscreen(), term.hidden_cursor():
         while True:
