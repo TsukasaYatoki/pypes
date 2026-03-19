@@ -26,14 +26,14 @@ class Pipe:
     _color_set = ["red", "green", "blue"]
 
     def __init__(
-        self, max_x: int, max_y: int, p_turn: float = 0.9, border: str = "reset"
+        self, max_x: int, max_y: int, p_turn: float = 0.1, border: str = "reset"
     ) -> None:
         self.max_x = max_x
         self.max_y = max_y
         self.border = border
 
         self.p_turn = p_turn
-        self.p_straight = 1 - 2 * p_turn
+        self.p_straight = 1 - p_turn
 
         self._reset()
 
@@ -86,7 +86,7 @@ class Pipe:
             Direction((self.direction + 1) % 4),
             Direction((self.direction - 1) % 4),
         ]
-        weights = [self.p_straight, self.p_turn, self.p_turn]
+        weights = [self.p_straight, self.p_turn / 2, self.p_turn / 2]
 
         next_direction = random.choices(choices, weights)[0]
 

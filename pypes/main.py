@@ -1,9 +1,8 @@
 import argparse
 import time
 
-from blessed import Terminal
 from pipe import Pipe
-from render import Canvas
+from render import Renderer
 
 
 def parse_args() -> argparse.Namespace:
@@ -13,7 +12,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--fps", type=int, default=20, help="Frames per second")
     parser.add_argument(
-        "--turn_prob", type=float, default=0.05, help="Probability of pipe turning"
+        "--turn_prob", type=float, default=0.1, help="Probability of pipe turning"
     )
     parser.add_argument(
         "--border_method",
@@ -26,17 +25,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def main(args: argparse.Namespace) -> None:
-    term = Terminal()
-    canvas = Canvas(term)
-    canvas.clear()
-
+    renderer = Renderer()
     pipe = Pipe(
-        term.width, term.height, p_turn=args.turn_prob, border=args.border_method
+        renderer.max_x, renderer.max_y, p_turn=args.turn_prob, border=args.border_method
     )
 
-    with term.fullscreen(), term.hidden_cursor():
+    with renderer.term.fullscreen(), renderer.term.hidden_cursor():
         while True:
-            canvas.draw(pipe)
+            renderer.draw(pipe)
             pipe.move()
             pipe.turn()
             time.sleep(1 / args.fps)
