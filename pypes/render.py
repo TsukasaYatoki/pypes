@@ -14,4 +14,9 @@ class Canvas:
 
     def draw(self, pipe: Pipe) -> None:
         """Draw the current pipe glyph at its terminal coordinates."""
-        print(self.term.move(pipe.y, pipe.x) + pipe.char, end="", flush=True)
+        print(
+            self.term.move_xy(pipe.x, pipe.y)
+            + getattr(self.term, pipe.color)(pipe.char),
+            end="",
+            flush=True,
+        )
