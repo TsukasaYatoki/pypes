@@ -20,14 +20,19 @@ class Pipe:
     }
     _char = "┃┏ ┓┛━┓  ┗┃┛┗ ┏━"
 
-    def __init__(self, max_x: int, max_y: int, border: str = "reset") -> None:
+    def __init__(
+        self, max_x: int, max_y: int, p_turn: float = 0.9, border: str = "reset"
+    ) -> None:
         self.max_x = max_x
         self.max_y = max_y
         self.border = border
 
-        self.reset()
+        self.p_turn = p_turn
+        self.p_straight = 1 - 2 * p_turn
 
-    def reset(self) -> None:
+        self._reset()
+
+    def _reset(self) -> None:
         """Place the pipe on a random edge and choose an initial direction."""
         self.direction = random.choice(list(Direction))
 
@@ -46,25 +51,27 @@ class Pipe:
 
         self.char = self._char[self.direction * 4 + self.direction]
 
+    def _inbounds(self) -> bool:
+        """Check if the pipe is within the terminal bounds."""
+        return 0 <= self.x < self.max_x and 0 <= self.y < self.max_y
+
     def move(self) -> None:
         """Advance one step in the current direction, resetting at the border."""
         dx, dy = self._vectors[self.direction]
         self.x += dx
         self.y += dy
 
-        if not (0 <= self.x < self.max_x and 0 <= self.y < self.max_y):
+        if not self._inbounds():
             if self.border == "cycle":
                 self.x %= self.max_x
                 self.y %= self.max_y
             else:
-                self.reset()
+                self._reset()
 
-    def turn(self, p_straight: float = 0.9) -> None:
+    def turn(self) -> None:
         """Randomly keep going straight or turn left/right, then update the glyph."""
         choices = [self.direction, (self.direction + 1) % 4, (self.direction - 1) % 4]
-
-        p_turn = (1 - p_straight) / 2
-        weights = [p_straight, p_turn, p_turn]
+        weights = [self.p_straight, self.p_turn, self.p_turn]
 
         next_direction = random.choices(choices, weights)[0]
         self.char = self._char[self.direction * 4 + next_direction]

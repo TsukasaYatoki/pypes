@@ -13,7 +13,7 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--fps", type=int, default=20, help="Frames per second")
     parser.add_argument(
-        "--straight_prob", type=float, default=0.9, help="Probability of going straight"
+        "--turn_prob", type=float, default=0.05, help="Probability of pipe turning"
     )
     parser.add_argument(
         "--border_method",
@@ -30,13 +30,15 @@ def main(args: argparse.Namespace) -> None:
     canvas = Canvas(term)
     canvas.clear()
 
-    pipe = Pipe(term.width, term.height, border=args.border_method)
+    pipe = Pipe(
+        term.width, term.height, p_turn=args.turn_prob, border=args.border_method
+    )
 
     with term.fullscreen(), term.hidden_cursor():
         while True:
             canvas.draw(pipe)
             pipe.move()
-            pipe.turn(args.straight_prob)
+            pipe.turn()
             time.sleep(1 / args.fps)
 
 
