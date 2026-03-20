@@ -22,15 +22,27 @@ class Direction(IntEnum):
 class Pipe:
     """A single animated pipe segment that moves across the terminal."""
 
-    _char_set = "┃┏ ┓┛━┓  ┗┃┛┗ ┏━"
+    _char_set = [
+        "┃┏ ┓┛━┓  ┗┃┛┗ ┏━",
+        "│┌ ┐┘─┐  └│┘└ ┌─",
+        "╿┍ ┑┚╼┒  ┕╽┙┖ ┎╾",
+        "║╔ ╗╝═╗  ╚║╝╚ ╔═",
+        "│╭ ╮╯─╮  ╰│╯╰ ╭─",
+    ]
     _color_set = ["red", "green", "yellow", "blue", "magenta", "cyan"]
 
     def __init__(
-        self, max_x: int, max_y: int, p_turn: float = 0.1, border: str = "reset"
+        self,
+        max_x: int,
+        max_y: int,
+        p_turn: float = 0.1,
+        border: str = "reset",
+        type: int = 0,
     ) -> None:
         self.max_x = max_x
         self.max_y = max_y
         self.border = border
+        self.type = type
 
         self.p_turn = p_turn
         self.p_straight = 1 - p_turn
@@ -64,7 +76,7 @@ class Pipe:
 
     def _get_char(self, next: Direction) -> str:
         """Get the appropriate pipe character based on the current and next directions."""
-        return self._char_set[(self.direction << 2) | next]
+        return self._char_set[self.type][(self.direction << 2) | next]
 
     def move(self) -> None:
         """Advance one step in the current direction, resetting at the border."""

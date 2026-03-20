@@ -13,13 +13,20 @@ def parse_args() -> argparse.Namespace:
         "--turn_prob", type=float, default=0.1, help="Probability of pipe turning"
     )
     parser.add_argument(
+        "--pipe_type",
+        type=int,
+        default=0,
+        choices=range(5),
+        help="Pipe character set type",
+    )
+    parser.add_argument(
         "--bg_color",
         type=str,
         default="black",
         help="Background color, can be a named color or hex code",
     )
     parser.add_argument(
-        "--border_method",
+        "--border_mode",
         choices=["reset", "cycle"],
         default="reset",
         help="How pipes behave at the border",

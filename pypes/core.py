@@ -11,7 +11,9 @@ class Animation:
         self.renderer = Renderer(args.bg_color)
 
         width, height = self.renderer.get_terminal_size()
-        self.pipe = Pipe(width, height, args.turn_prob, args.border_method)
+        self.pipe = Pipe(
+            width, height, args.turn_prob, args.border_mode, args.pipe_type
+        )
 
         self.frame_time = 1 / args.fps
 
