@@ -19,7 +19,7 @@ class Direction(IntEnum):
         return vectors[self]
 
 
-class Pipe:
+class Pipe:  # TODO: implement trails animation like rainbow or fade
     """A single animated pipe segment that moves across the terminal."""
 
     _char_set = [
@@ -78,20 +78,20 @@ class Pipe:
         """Get the appropriate pipe character based on the current and next directions."""
         return self._char_set[self.type][(self.direction << 2) | next]
 
-    def move(self) -> None:
+    def _move(self) -> None:
         """Advance one step in the current direction, resetting at the border."""
         dx, dy = self.direction.vector
         self.x += dx
         self.y += dy
 
-        if not self._inbounds():
+        if not self._inbounds():  # TODO: add more border modes like bounce or wrap
             if self.border == "reset":
                 self._reset()
             elif self.border == "cycle":
                 self.x %= self.max_x
                 self.y %= self.max_y
 
-    def turn(self) -> None:
+    def _turn(self) -> None:
         """Randomly keep going straight or turn left/right, then update the glyph."""
         choices = [
             self.direction,
@@ -104,3 +104,8 @@ class Pipe:
 
         self.char = self._get_char(next_direction)
         self.direction = next_direction
+
+    def update(self) -> None:
+        """Move and turn the pipe for the next frame."""
+        self._move()
+        self._turn()

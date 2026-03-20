@@ -1,23 +1,33 @@
+import argparse
 import time
 
 from pipe import Pipe
 from render import Renderer
 
 
-class Animation:
+class Animation:  # TODO: reset periodically through some limit
     """Main class that runs the pipe animation."""
 
-    def __init__(self, args) -> None:
-        self.renderer = Renderer(args.bg_color)
-
-        width, height = self.renderer.get_terminal_size()
-        self.pipe = Pipe(
-            width, height, args.turn_prob, args.border_mode, args.pipe_type
-        )
-
+    def __init__(self, args: argparse.Namespace) -> None:
         self.frame_time = 1 / args.fps
+        self.pipe_num = args.pipe_num
+        self.turn_prob = args.turn_prob
+        self.border_mode = args.border_mode
+        self.pipe_type = args.pipe_type
+
+        self.renderer = Renderer(args.bg_color)
+        self.pipes = self._init_pipes()
 
         self.running = False
+
+    def _init_pipes(self) -> list[Pipe]:
+        """Initialize pipes with random positions and directions."""
+        width, height = self.renderer.get_terminal_size()
+        pipes = [
+            Pipe(width, height, self.turn_prob, self.border_mode, self.pipe_type)
+            for _ in range(self.pipe_num)
+        ]
+        return pipes
 
     def loop(self) -> None:
         """Main animation loop that draws frames and updates the pipe."""
@@ -25,11 +35,9 @@ class Animation:
         with self.renderer.term.fullscreen(), self.renderer.term.hidden_cursor():
             try:
                 while self.running:
-                    self.renderer.draw(
-                        self.pipe.x, self.pipe.y, self.pipe.char, self.pipe.color
-                    )
-                    self.pipe.move()
-                    self.pipe.turn()
+                    for pipe in self.pipes:  # TODO: draw once per frame, not per pipe
+                        self.renderer.draw(pipe.x, pipe.y, pipe.char, pipe.color)
+                        pipe.update()
                     time.sleep(self.frame_time)
             except KeyboardInterrupt:
                 self.running = False

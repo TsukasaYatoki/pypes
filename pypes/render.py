@@ -1,7 +1,7 @@
 from blessed import Terminal
 
 
-class Renderer:
+class Renderer:  # TODO: not use blessed dependency
     """Small rendering helper that writes pipe frames to the terminal."""
 
     def __init__(self, bg_color: str = "black") -> None:
