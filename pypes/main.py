@@ -16,6 +16,13 @@ def parse_args() -> argparse.Namespace:
         "-n", "--pipe_num", type=int, default=2, help="Number of pipes to animate"
     )
     parser.add_argument(
+        "-l",
+        "--frame_limit",
+        type=int,
+        default=0,
+        help="Number of frames to run before clearing (0 for infinite)",
+    )
+    parser.add_argument(
         "-t",
         "--pipe_type",
         type=int,

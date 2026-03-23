@@ -12,9 +12,9 @@ class Renderer:  # TODO: not use blessed dependency
         else:
             self.bg_color = getattr(self.term, f"on_{bg_color}")
 
-        self._clear()
+        self.clear()
 
-    def _clear(self) -> None:
+    def clear(self) -> None:
         """Clear the screen and move the cursor home before drawing frames."""
         print(self.term.home + self.term.clear + self.bg_color)
 

@@ -5,7 +5,7 @@ from pipe import Pipe
 from render import Renderer
 
 
-class Animation:  # TODO: reset periodically through some limit
+class Animation:
     """Main class that runs the pipe animation."""
 
     def __init__(self, args: argparse.Namespace) -> None:
@@ -14,9 +14,11 @@ class Animation:  # TODO: reset periodically through some limit
         self.turn_prob = args.turn_prob
         self.border_mode = args.border_mode
         self.pipe_type = args.pipe_type
+        self.frame_limit = args.frame_limit
 
         self.renderer = Renderer(args.bg_color)
         self.pipes = self._init_pipes()
+        self.frame_count = 0
 
         self.running = False
 
@@ -38,6 +40,11 @@ class Animation:  # TODO: reset periodically through some limit
                     for pipe in self.pipes:  # TODO: draw once per frame, not per pipe
                         self.renderer.draw(pipe.x, pipe.y, pipe.char, pipe.color)
                         pipe.update()
+                    self.frame_count += 1
                     time.sleep(self.frame_time)
+                    if self.frame_limit != 0 and self.frame_count >= self.frame_limit:
+                        self.renderer.clear()
+                        self.pipes = self._init_pipes()
+                        self.frame_count = 0
             except KeyboardInterrupt:
                 self.running = False
