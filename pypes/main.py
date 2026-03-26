@@ -13,7 +13,7 @@ def parse_args() -> argparse.Namespace:
         "-p", "--turn_prob", type=float, default=0.1, help="Probability of pipe turning"
     )
     parser.add_argument(
-        "-n", "--pipe_num", type=int, default=2, help="Number of pipes to animate"
+        "-n", "--pipe_num", type=int, default=1, help="Number of pipes to animate"
     )
     parser.add_argument(
         "-l",
