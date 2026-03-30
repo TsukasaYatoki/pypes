@@ -3,7 +3,7 @@ import shutil
 import time
 
 from pipe import Pipe
-from render import Renderer
+from render import Glyph, Renderer
 
 
 class Animation:
@@ -32,6 +32,14 @@ class Animation:
         ]
         return pipes
 
+    def _get_glyphs(self) -> list[Glyph]:
+        """Convert current pipe states to a list of Glyphs for rendering."""
+        glyphs = [
+            Glyph(x=pipe.x, y=pipe.y, char=pipe.char, color=pipe.color)
+            for pipe in self.pipes
+        ]
+        return glyphs
+
     def loop(self) -> None:
         """Main animation loop that draws frames and updates the pipe."""
         self.running = True
@@ -39,7 +47,8 @@ class Animation:
             try:
                 while self.running:
                     for pipe in self.pipes:  # TODO: draw once per frame, not per pipe
-                        self.renderer.draw(pipe.x, pipe.y, pipe.char, pipe.color)
+                        glyphs = self._get_glyphs()
+                        self.renderer.draw(glyphs)
                         pipe.update()
 
                     self.frame_count += 1

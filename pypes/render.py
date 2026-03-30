@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from dataclasses import dataclass
 
 # ANSI Escape Sequences
 ESC = "\033"
@@ -8,6 +9,16 @@ HIDE_CURSOR = f"{ESC}[?25l"
 SHOW_CURSOR = f"{ESC}[?25h"
 ALTSCREEN_ON = f"{ESC}[?1049h"
 ALTSCREEN_OFF = f"{ESC}[?1049l"
+
+
+@dataclass
+class Glyph:
+    """Represents a single character to be drawn at specific coordinates with a color."""
+
+    x: int
+    y: int
+    char: str
+    color: str
 
 
 class Renderer:
@@ -52,14 +63,20 @@ class Renderer:
 
         return f"{ESC}[{layer}{color_code}m"
 
+    def _get_pos_ansi(self, x: int, y: int) -> str:
+        """Convert (x, y) coordinates to ANSI cursor position code."""
+        return f"{ESC}[{y + 1};{x + 1}H"
+
     def clear(self) -> None:
         """Clear the screen and move the cursor home before drawing frames."""
         print(f"{HOME}{CLEAR}{self.bg_ansi}", end="", flush=True)
 
-    def draw(self, x: int, y: int, glyph: str, color: str) -> None:
-        """Draw the current pipe glyph at its terminal coordinates."""
-        fg_ansi = self._get_color_ansi(color, background=False)
-        # ANSI coordinates are 1-indexed, while x and y are 0-indexed
-        move_ansi = f"{ESC}[{y + 1};{x + 1}H"
+    def draw(self, glyphs: list[Glyph]) -> None:
+        """Draw a list of Glyphs to the terminal."""
+        output = []
+        for glyph in glyphs:
+            move_ansi = self._get_pos_ansi(glyph.x, glyph.y)
+            fg_ansi = self._get_color_ansi(glyph.color, background=False)
+            output.append(f"{self.bg_ansi}{move_ansi}{fg_ansi}{glyph.char}")
 
-        print(f"{move_ansi}{self.bg_ansi}{fg_ansi}{glyph}", end="", flush=True)
+        print("".join(output), end="", flush=True)
