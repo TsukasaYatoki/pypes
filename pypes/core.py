@@ -23,6 +23,12 @@ class Animation:
 
         self.running = False
 
+    def _clear(self) -> None:
+        """Clear the terminal screen."""
+        self.renderer.clear()
+        self.pipes = self._init_pipes()
+        self.frame_count = 0
+
     def _init_pipes(self) -> list[Pipe]:
         """Initialize pipes with random positions and directions."""
         width, height = shutil.get_terminal_size()
@@ -31,6 +37,11 @@ class Animation:
             for _ in range(self.pipe_num)
         ]
         return pipes
+
+    def _update_pipes(self) -> None:
+        """Update the state of all pipes."""
+        for pipe in self.pipes:
+            pipe.update()
 
     def _get_glyphs(self) -> list[Glyph]:
         """Convert current pipe states to a list of Glyphs for rendering."""
@@ -43,20 +54,19 @@ class Animation:
     def loop(self) -> None:
         """Main animation loop that draws frames and updates the pipe."""
         self.running = True
+
         with self.renderer.fullscreen():
             try:
                 while self.running:
-                    for pipe in self.pipes:  # TODO: draw once per frame, not per pipe
-                        glyphs = self._get_glyphs()
-                        self.renderer.draw(glyphs)
-                        pipe.update()
+                    glyphs = self._get_glyphs()
+                    self.renderer.draw(glyphs)
+                    self._update_pipes()
 
                     self.frame_count += 1
                     time.sleep(self.frame_time)
 
                     if self.frame_limit > 0 and self.frame_count >= self.frame_limit:
-                        self.renderer.clear()
-                        self.pipes = self._init_pipes()
-                        self.frame_count = 0
+                        self._clear()
+
             except KeyboardInterrupt:
                 self.running = False
