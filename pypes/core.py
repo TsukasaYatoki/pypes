@@ -2,8 +2,8 @@ import argparse
 import shutil
 import time
 
-from pipe import Pipe
-from render import Renderer
+from pypes.pipe import Pipe
+from pypes.render import Renderer
 
 
 class Animation:
