@@ -1,6 +1,6 @@
 import argparse
 
-from core import Animation
+from pypes.core import Animation
 
 
 def parse_args() -> argparse.Namespace:
